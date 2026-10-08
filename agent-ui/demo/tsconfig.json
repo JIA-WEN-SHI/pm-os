@@ -1,0 +1,64 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": [
+      "ES2023",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "jsx": "react-jsx",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "baseUrl": "..",
+    "typeRoots": [
+      "./node_modules/@types"
+    ],
+    "paths": {
+      "react": [
+        "./demo/node_modules/@types/react"
+      ],
+      "react-dom": [
+        "./demo/node_modules/react-dom"
+      ],
+      "lucide-react": [
+        "./demo/node_modules/lucide-react"
+      ],
+      "@radix-ui/react-dialog": [
+        "./demo/node_modules/@radix-ui/react-dialog"
+      ],
+      "react-markdown": [
+        "./demo/node_modules/react-markdown"
+      ],
+      "remark-gfm": [
+        "./demo/node_modules/remark-gfm"
+      ],
+      "sonner": [
+        "./demo/node_modules/sonner"
+      ],
+      "react/*": [
+        "./demo/node_modules/@types/react/*"
+      ],
+      "react-dom/*": [
+        "./demo/node_modules/@types/react-dom/*"
+      ],
+      "next/link": [
+        "./demo/next-link.tsx"
+      ],
+      "next/navigation": [
+        "./demo/next-navigation.tsx"
+      ],
+      "@/*": [
+        "./*"
+      ]
+    }
+  },
+  "include": [
+    "*.tsx",
+    "../src/features/pm/**/*"
+  ]
+}

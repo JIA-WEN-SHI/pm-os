@@ -16,6 +16,7 @@ import {
   selectionConversation
 } from './report-domain'
 import { createWorkspace } from './seed'
+import { pmRequest, publicDemo } from './demo-request'
 import { createRunContext } from './context-domain'
 import { handoffInputs } from './handoff-core'
 import {
@@ -138,7 +139,7 @@ export function PMProvider({ children }: { children: ReactNode }) {
   )
   const checkConnection = useCallback(async () => {
     try {
-      const r = await fetch('/api/pm/status')
+      const r = await pmRequest('/api/pm/status')
       if (!r.ok) throw new Error()
       setAgent(await r.json())
     } catch {
@@ -165,7 +166,7 @@ export function PMProvider({ children }: { children: ReactNode }) {
         if (!persistence.current)
           persistence.current = new WorkspacePersistence({
             request: (input, options) =>
-              fetch(input, { ...options, signal: AbortSignal.timeout(20000) }),
+              pmRequest(input, { ...options, signal: AbortSignal.timeout(20000) }),
             recoveryStorage: sessionStorage,
             validate: validateBackup
           })
@@ -391,7 +392,7 @@ export function PMProvider({ children }: { children: ReactNode }) {
   )
   const cancelRun = useCallback(async (projectId: string, runId: string) => {
     try {
-      const response = await fetch(
+      const response = await pmRequest(
         `/api/pm/execution?project=${encodeURIComponent(projectId)}&run=${encodeURIComponent(runId)}&action=cancel`,
         { method: 'POST', signal: AbortSignal.timeout(25000) }
       )
@@ -425,7 +426,7 @@ export function PMProvider({ children }: { children: ReactNode }) {
           try {
             while (!controller.signal.aborted) {
               try {
-                const response = await fetch(
+                const response = await pmRequest(
                   `/api/pm/execution?project=${encodeURIComponent(p.id)}&run=${encodeURIComponent(r.id)}`,
                   {
                     signal: AbortSignal.any([
@@ -503,6 +504,10 @@ export function PMProvider({ children }: { children: ReactNode }) {
   }, [data, storageReady, busy, project])
   const readWeb = useCallback(
     async (id: string, sourceId: string) => {
+      if (publicDemo) {
+        toast.info('公开演示不读取外部网页；可添加示例文本体验资料管理。')
+        return null
+      }
       if (
         !storageReady ||
         unsaved.current ||
@@ -530,7 +535,7 @@ export function PMProvider({ children }: { children: ReactNode }) {
           runs: [createWebRead(q, sourceId, runId, now()), ...q.runs]
         }))
         if (!recorded) return null
-        const response = await fetch(
+        const response = await pmRequest(
           `/api/pm/execution?project=${encodeURIComponent(id)}&run=${encodeURIComponent(runId)}`,
           { method: 'POST', signal: AbortSignal.timeout(25000) }
         )
@@ -611,7 +616,13 @@ export function PMProvider({ children }: { children: ReactNode }) {
           return false
         }
       }
-      const blocked = selection
+      if (publicDemo && options.prepareStage) {
+        toast.info('公开演示可编辑阶段方案和报告；自动生成阶段方案需要本地服务。')
+        return false
+      }
+      const blocked = publicDemo && !options.taskId && !options.prepareStage
+        ? ''
+        : selection
         ? ''
         : options.prepareStage
           ? preparationBlock(p, options.stage)
@@ -837,7 +848,7 @@ export function PMProvider({ children }: { children: ReactNode }) {
         return false
       }
       try {
-        const response = await fetch(
+        const response = await pmRequest(
           `/api/pm/execution?project=${encodeURIComponent(id)}&run=${encodeURIComponent(runId)}`,
           {
             method: 'POST',

@@ -4,7 +4,7 @@
 
 让分散的对话、资料和阶段产出，回到同一个项目。
 
-**先查看：** [项目案例](https://jia-wen-shi.github.io/#case-pmos) · [作品集首页](https://jia-wen-shi.github.io/)
+**先查看：** [直接演示](https://jia-wen-shi.github.io/demos/pmos/) · [项目案例](https://jia-wen-shi.github.io/#case-pmos) · [作品集首页](https://jia-wen-shi.github.io/)
 
 无需登录 GitHub 即可浏览公开源码。案例页和公共原型不需要安装环境或填写模型密钥。
 
@@ -18,13 +18,24 @@
 
 已具备可展示的本地工作台与部分运行验证材料。尚未完成真实用户案例验证，也不宣称完整自动 Agent 团队或自动评估。
 
-公共入口为流程与界面的案例展示，未公开运行依赖密钥、数据库或本机服务的完整后端。
+公开演示可直接操作现有前端：示例项目 · 浏览器保存 · 资料、报告编辑与版本审阅 · 助手为预设回复。演示使用合成数据，不代表真实业务或实时模型效果。完整后端仍需本地服务与自己的配置。
 
 ## 源码结构
 
 `agent-ui/ · pmos/ · tests/ · agno_app.py`
 
 这是当前工作区源码的发布快照，未附带旧 Git 历史。真实密钥、数据库、浏览器会话、日志、客户原始金融材料和依赖缓存不在仓库内。
+
+## 无后台演示
+
+```bash
+cd agent-ui/demo
+npm ci
+npm run dev
+npm run build
+```
+
+静态产物在 `agent-ui/demo/dist/`。复用原 PM 工作台，示例保存到浏览器独立空间；可用“重置演示”恢复。未连接 Agno、Hermes 或模型。
 
 ## 本地运行
 

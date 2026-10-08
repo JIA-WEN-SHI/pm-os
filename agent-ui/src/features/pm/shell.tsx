@@ -36,6 +36,7 @@ import { ProjectChat } from './chat'
 import { Button, Card, cx, Empty, Modal, type Navigate } from './ui'
 import { downloadText } from './domain'
 import './pm.css'
+import { publicDemo } from './demo-request'
 
 const icons = {
   overview: LayoutDashboard,
@@ -262,7 +263,7 @@ function Workspace() {
             target="_blank"
           >
             <MessageSquare size={17} />
-            <span>原版 Agno 对话</span>
+            <span>{publicDemo ? "打开示例项目" : "原版 Agno 对话"}</span>
             <ArrowUpRight size={13} />
           </Link>
           <div className="pm-local-profile">
@@ -314,7 +315,7 @@ function Workspace() {
             </button>
             <span className="pm-connection-status">
               <i className={store.agent.connected ? 'connected' : ''} />
-              {store.agent.agent} {store.agent.connected ? '已连接' : '未连接'}
+              {store.agent.agent} {store.agent.connected ? (publicDemo ? '演示模式' : '已连接') : '未连接'}
             </span>
             <button
               className="pm-icon-button pm-bell"
@@ -368,7 +369,7 @@ function Workspace() {
         )}
         {store.saving && (
           <div className="pm-save-warning" role="status">
-            正在保存到本机项目服务…
+            正在保存工作内容…
           </div>
         )}
         <div className="pm-workspace-body">
@@ -557,14 +558,12 @@ function Workspace() {
           </p>
           <Card title="当前可以使用">
             <div className="pm-card-pad">
-              项目与任务管理、文本资料、真实 Agno
-              对话与单项生成、报告编辑与版本确认、方法说明、知识发布与备份。
+              {publicDemo ? '示例项目与任务管理、文本资料、预设助手对话、报告编辑与版本确认、方法说明、知识沉淀与导出。' : '项目与任务管理、文本资料、真实 Agno 对话与单项生成、报告编辑与版本确认、方法说明、知识发布与备份。'}
             </div>
           </Card>
           <Card title="保存与连接">
             <div className="pm-card-pad">
-              业务资料保存在本机项目服务，请定期在设置中导出。浏览器保留恢复草稿。模型使用已有后端配置；自动网页采集、PDF
-              解析、批量评测和完整工作流调度尚未接入。
+              {publicDemo ? '当前为公开演示，内容保存到浏览器独立示例空间。助手仅返回预设文本，不连接模型或外部网页；可用顶部“重置演示”恢复样例。' : '业务资料保存在本机项目服务，请定期在设置中导出。浏览器保留恢复草稿。模型使用已有后端配置；自动网页采集、PDF 解析、批量评测和完整工作流调度尚未接入。'}
             </div>
           </Card>
           <Button onClick={() => setHelp(false)}>
