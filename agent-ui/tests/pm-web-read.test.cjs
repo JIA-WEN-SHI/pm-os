@@ -1,0 +1,9 @@
+const {test}=require('node:test');const assert=require('node:assert/strict');
+const {createProject,validateBackup}=require('../src/features/pm/domain.ts');
+const {versionSource}=require('../src/features/pm/source-domain.ts');
+const {createWebRead,acceptWebRead}=require('../src/features/pm/web-read-domain.ts');
+function sample(){const p=createProject({name:'网页测试',goal:'取得原文'});p.sources=[versionSource({id:'s',kind:'link',title:'示例',url:'https://example.com/',content:'旧正文',at:'then'},'unknown')];return p}
+const wrap=p=>({schema:1,projects:[p],skills:[],knowledge:[]});
+test('web read binds source version and acceptance appends instead of overwriting',()=>{let p=sample();const r=createWebRead(p,'s','r','now');assert.equal(r.contextSnapshot.request.webRead.sourceVersion,1);p.runs=[{...r,status:'success',output:'读取的原文'}];p=acceptWebRead(p,'s','r');assert.equal(p.sources[0].versions.length,2);assert.equal(p.sources[0].versions[0].content,'旧正文');assert.equal(p.sources[0].content,'读取的原文');assert.equal(p.sources[0].versions[1].readRunId,'r');assert.doesNotThrow(()=>validateBackup(wrap(p)));assert.throws(()=>acceptWebRead(p,'s','r'))});
+test('failed reads and intervening edits cannot replace source content',()=>{const p=sample();p.runs=[{...createWebRead(p,'s','r','now'),status:'failed',output:'错误片段'}];assert.throws(()=>acceptWebRead(p,'s','r'));p.runs[0].status='success';p.sources[0].versions.push({...p.sources[0].versions[0],version:2});assert.throws(()=>acceptWebRead(p,'s','r'))});
+test('backup rejects forged URL/source/version and invented read provenance',()=>{const p=sample();p.runs=[createWebRead(p,'s','r','now')];for(const [k,v] of [['url','https://other.example/'],['sourceId','foreign'],['sourceVersion',2]]){const x=structuredClone(p);x.runs[0].contextSnapshot.request.webRead[k]=v;assert.throws(()=>validateBackup(wrap(x)))}p.sources[0].versions[0].readRunId='unknown';assert.throws(()=>validateBackup(wrap(p)))})

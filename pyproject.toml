@@ -1,0 +1,16 @@
+[project]
+name = "pm-agentos"
+version = "0.1.0"
+description = "Local Agno AgentOS deployment for an AI PM workspace"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+    "agno[os]==3.0.10",
+    "openai>=1.0,<3",
+    "python-dotenv>=1.0,<2",
+    "sqlalchemy>=2.0,<3",
+]
+
+[tool.uv]
+package = false
+concurrent-downloads = 4
+link-mode = "copy"
